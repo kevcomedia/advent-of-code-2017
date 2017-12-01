@@ -18,4 +18,22 @@ function circularDigitSum(sequence) {
     .reduce((a, b) => a + b, 0);
 }
 
-console.log(circularDigitSum(input));
+/*
+ * String -> Natural
+ * Produce the sum of the digits that are equal to the digit halfway ahead. The
+ * input is assumed to have an even number of digits.
+ */
+assert.equal(digitHalfwaySum('1212'), 6);
+assert.equal(digitHalfwaySum('1221'), 0);
+assert.equal(digitHalfwaySum('123425'), 4);
+assert.equal(digitHalfwaySum('123123'), 12);
+assert.equal(digitHalfwaySum('12131415'), 4);
+
+function digitHalfwaySum(sequence) {
+  return [...sequence]
+    .map(Number)
+    .filter((digit, i, a) => digit == a[(i + a.length / 2) % a.length])
+    .reduce((a, b) => a + b, 0);
+}
+
+console.log(digitHalfwaySum(input));
