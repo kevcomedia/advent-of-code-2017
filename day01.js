@@ -15,22 +15,22 @@ function circularSum(offsetPredicateFn) {
  * Produce the sum of the digits whose next digit is equal to itself. The next
  * digit of the last digit is the first digit.
  */
-const circularDigitSum = circularSum((d, i, a) => d == a[(i + 1) % a.length]);
-assert.equal(circularDigitSum('1122'), 3);
-assert.equal(circularDigitSum('1111'), 4);
-assert.equal(circularDigitSum('1234'), 0);
-assert.equal(circularDigitSum('91212129'), 9);
+const sumNextDigit = circularSum((d, i, a) => d == a[(i + 1) % a.length]);
+assert.equal(sumNextDigit('1122'), 3);
+assert.equal(sumNextDigit('1111'), 4);
+assert.equal(sumNextDigit('1234'), 0);
+assert.equal(sumNextDigit('91212129'), 9);
 
 /*
  * String -> Natural
  * Produce the sum of the digits that are equal to the digit halfway ahead. The
  * input is assumed to have an even number of digits.
  */
-const digitHalfwaySum = circularSum((d, i, a) => d == a[(i + a.length / 2) % a.length])
-assert.equal(digitHalfwaySum('1212'), 6);
-assert.equal(digitHalfwaySum('1221'), 0);
-assert.equal(digitHalfwaySum('123425'), 4);
-assert.equal(digitHalfwaySum('123123'), 12);
-assert.equal(digitHalfwaySum('12131415'), 4);
+const sumHalfwayDigit = circularSum((d, i, a) => d == a[(i + a.length / 2) % a.length])
+assert.equal(sumHalfwayDigit('1212'), 6);
+assert.equal(sumHalfwayDigit('1221'), 0);
+assert.equal(sumHalfwayDigit('123425'), 4);
+assert.equal(sumHalfwayDigit('123123'), 12);
+assert.equal(sumHalfwayDigit('12131415'), 4);
 
-console.log(digitHalfwaySum(input));
+console.log(sumHalfwayDigit(input));
