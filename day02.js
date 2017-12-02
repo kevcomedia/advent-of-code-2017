@@ -15,7 +15,6 @@ assert.equal(checksumDivisible('5 9 2 8\n9 4 7 3\n3 8 6 5'), 9);
 function checksumDivisible(spreadsheet) {
   return spreadsheet.split('\n')
     .map((row) => row.split(' ').map(Number))
-    .map((row) => row.sort((a, b) => a - b))
     .map((row) => row.filter((num, idx, arr) => {
       for (let i = 0; i < arr.length; i++) {
         if (i == idx) continue;
