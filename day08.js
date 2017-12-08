@@ -13,7 +13,12 @@ const ops = {
   '>=': (x, y) => x >= y,
 };
 
-function produceRegisters(instructions) {
+function produceRegisters(instructionString) {
+  return instructionString.split('\n')
+    .reduce((registers, line) => {
+      const registerName = line.split(' ')[0];
+      registers[registerName] = 0;
+    }, {});
   const registers = {};
   for (let ins of instructions.split('\n')) {
     const name = ins.split(' ')[0];
