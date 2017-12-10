@@ -1,15 +1,7 @@
-const assert = require('assert');
-
-const lengths = [1, 2, 3]; //[3, 4, 1, 5];
-
 const x = '225,171,131,2,35,5,0,13,1,246,54,97,255,98,254,110';
-const ascii = [...x].map(c => c.charCodeAt()).concat([17, 31, 73, 47, 23]);
+const lengths = [...x].map(c => c.charCodeAt()).concat([17, 31, 73, 47, 23]);
 
-const list = Array.from({length: 256}, (_, i) => i);
-let skip = 0;
-let ptr = 0;
-
-function reverse(length) {
+function reverse(list, ptr, length) {
   let start = ptr;
   let end = (ptr + length - 1) % list.length;
 
@@ -17,38 +9,39 @@ function reverse(length) {
     const s = (start + i) % list.length;
     const e = (list.length + (end - i)) % list.length;
 
-    const temp = list[s];
-    list[s] = list[e];
-    list[e] = temp;
+    [list[s], list[e]] = [list[e], list[s]];
   }
 }
 
-function step() {
-  for (let i = 0; i < ascii.length; i++) {
-    reverse(ascii[i]);
-    ptr += ascii[i] + skip;
-    skip++;
+function step(list, ptr, initialSkip) {
+  for (let i = 0; i < lengths.length; i++) {
+    reverse(list, ptr, lengths[i]);
+    ptr += lengths[i] + i + initialSkip;
   }
+  return ptr;
 }
 
-function rounds() {
-  for (let i = 0; i < 64; i++) {
-    step();
-  }
-}
-
-function denseHash() {
-  let hash = [];
+function denseHash(list) {
+  let hash = '';
   for (let i = 0; i < 256; i += 16) {
-    hash.push(list.slice(i, i + 16).reduce((a, b) => a ^ b));
+    const xored = list.slice(i, i + 16).reduce((a, b) => a ^ b);
+    const hex = xored.toString(16).padStart(2, '0');
+    hash += hex;
   }
   return hash;
 }
 
-function toHex(hash) {
-  return hash.map(n => n.toString(16).padStart(2, '0')).join('');
+function knotHash(lengths) {
+  const list = Array.from({length: 256}, (_, i) => i);
+
+  let ptr = 0;
+  let skip = 0;
+  for (let i = 0; i < 64; i++) {
+    ptr = step(list, ptr, skip);
+    skip += lengths.length;
+  }
+
+  return denseHash(list);
 }
 
-rounds();
-const hash = denseHash();
-console.log(toHex(hash));
+console.log(knotHash(lengths));
