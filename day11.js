@@ -5,7 +5,7 @@ const max = (a, b) => Math.max(a, b);
 const x = input;
 const parsed = x.split(',');
 
-function countSteps(parsed) {
+function maxDistance(parsed) {
   const path = parsed.slice(0);
   let ns = 0;
   let nesw = 0;
@@ -54,4 +54,4 @@ function countSteps(parsed) {
   return maxDistance;
 }
 
-console.log(countSteps(parsed));
+console.log(maxDistance(parsed));
