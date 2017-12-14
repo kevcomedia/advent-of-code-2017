@@ -1,5 +1,4 @@
 const x = '225,171,131,2,35,5,0,13,1,246,54,97,255,98,254,110';
-const lengths = [...x].map(c => c.charCodeAt()).concat([17, 31, 73, 47, 23]);
 
 function reverse(list, ptr, length) {
   let start = ptr;
@@ -13,7 +12,7 @@ function reverse(list, ptr, length) {
   }
 }
 
-function step(list, ptr, initialSkip) {
+function step(list, lengths, ptr, initialSkip) {
   for (let i = 0; i < lengths.length; i++) {
     reverse(list, ptr, lengths[i]);
     ptr += lengths[i] + i + initialSkip;
@@ -31,17 +30,20 @@ function denseHash(list) {
   return hash;
 }
 
-function knotHash(lengths) {
+function knotHash(key) {
+  const lengths = [...key]
+    .map(c => c.charCodeAt())
+    .concat([17, 31, 73, 47, 23]);
   const list = Array.from({length: 256}, (_, i) => i);
 
   let ptr = 0;
   let skip = 0;
   for (let i = 0; i < 64; i++) {
-    ptr = step(list, ptr, skip);
+    ptr = step(list, lengths, ptr, skip);
     skip += lengths.length;
   }
 
   return denseHash(list);
 }
 
-console.log(knotHash(lengths));
+console.log(knotHash(x));
