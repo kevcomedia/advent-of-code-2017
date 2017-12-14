@@ -1,7 +1,4 @@
-// const x = '225,171,131,2,35,5,0,13,1,246,54,97,255,98,254,110';
 const key = 'stpzcrnm';
-const extra = [17, 31, 73, 47, 23];
-//const lengths = [...key].map(c => c.charCodeAt()).concat([17, 31, 73, 47, 23]);
 
 function reverse(list, ptr, length) {
   let start = ptr;
@@ -33,7 +30,10 @@ function denseHash(list) {
   return hash;
 }
 
-function knotHash(lengths) {
+function knotHash(key) {
+  const lengths = [...key]
+    .map(c => c.charCodeAt())
+    .concat([17, 31, 73, 47, 23]);
   const list = Array.from({length: 256}, (_, i) => i);
 
   let ptr = 0;
@@ -50,12 +50,11 @@ function createGrid(key) {
   let grid = [];
 
   for (let i = 0; i < 128; i++) {
-    const inp = [...(key + '-' + i)].map(c => c.charCodeAt()).concat(extra);
+    const inp = `${key}-${i}`;
     const bits = [...knotHash(inp)]
       .map(c => Number.parseInt(c, 16))
       .map(n => n.toString(2).padStart(4, '0'))
-      .join('')
-      .split('');
+      .reduce((a, b) => [...a, ...b], []);
 
     grid.push(bits);
   }
@@ -63,7 +62,14 @@ function createGrid(key) {
   return grid;
 }
 
+function countUsed(grid) {
+  return grid
+    .map(row => row.filter(c => c == '1').length)
+    .reduce((a, b) => a + b);
+}
+
 function countRegions(grid) {
+  // cheap, but quick way of deep-copying a matrix :P
   const gridCopy = JSON.parse(JSON.stringify(grid));
   let regions = 0;
 
@@ -98,4 +104,7 @@ function countRegions(grid) {
   return regions;
 }
 
-console.log(countRegions(createGrid(key)));
+const grid = createGrid(key);
+
+console.log(countUsed(grid));
+console.log(countRegions(grid));
