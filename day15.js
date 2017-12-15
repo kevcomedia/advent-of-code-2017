@@ -16,10 +16,10 @@ const factors = {
 };
 
 function* generator(seed, factor, mult) {
-  let next = (seed * factor) % 2147483647;
+  let next = seed;
   while (true) {
-    if (next % mult === 0) yield next;
     next = (next * factor) % 2147483647;
+    if (next % mult === 0) yield next;
   }
 }
 
