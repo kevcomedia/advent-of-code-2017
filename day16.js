@@ -32,42 +32,38 @@ const ops = {
     for (let i = 0; i < n; i++) {
       this.unshift(this.pop());
     }
-    return this;
   },
   x(a, b) {
     [this[a], this[b]] = [this[b], this[a]];
-    return this;
   },
   p(a, b) {
     const i = this.indexOf(a);
     const j = this.indexOf(b);
-    return ops.x.call(this, i, j);
+    ops.x.call(this, i, j);
   },
 };
 
-function optimize(instructions, size) {
-  const p = Array.from({length: size}, (_, i) => i);
-
-  instructions.forEach(ins => ins.op.apply(p, ins.vals));
-  return function(programs) {
-    const q = [];
-    for (let i = 0; i < p.length; i++) {
-      q.push(programs[p[i]]);
-    }
-    return q;
-  };
-}
-
-const size = 16;
 const instructions = toInstructions(input);
-const optimized = optimize(instructions, size);
-const programs = Array.from({length: size}, (_, i) =>
-  String.fromCharCode(i + 'a'.charCodeAt())
-);
 
-// instructions.forEach(ins => ins.op.apply(programs, ins.vals));
-let p = programs;
-for (let i = 0; i < 1e9; i++) {
-  p = optimized(p);
+function exec(instructions, {size = 16, rounds = 1} = {}) {
+  const programs = Array.from({length: size}, (_, i) =>
+    String.fromCharCode(i + 'a'.charCodeAt())
+  );
+
+  const states = [];
+
+  for (let i = 0; i < rounds; i++) {
+    if (states.includes(programs.join(''))) {
+      const idx = (rounds - states.length) % states.length;
+      return states[idx];
+    }
+
+    states.push(programs.join(''));
+    instructions.forEach(ins => ins.op.apply(programs, ins.vals));
+  }
+
+  return programs.join('');
 }
-console.log(p);
+
+console.log(exec(instructions));
+console.log(exec(instructions, {rounds: 1e9}));
