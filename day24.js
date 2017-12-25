@@ -49,4 +49,37 @@ function calculateStrongest(parts, start = 0, total = 0) {
   return max;
 }
 
+function getBridges(parts, start = 0, bridges = [], currBridge = []) {
+  const unusedParts = parts.filter(p => !p.used).filter(p => p.pins.has(start));
+  if (unusedParts.length == 0) {
+    bridges.push(currBridge.slice());
+  }
+
+  for (let i = 0; i < unusedParts.length; i++) {
+    const part = unusedParts[i];
+    const end = getOtherPin(part, start);
+    currBridge.push(part);
+    part.used = true;
+    getBridges(parts, end, bridges, currBridge);
+    currBridge.pop();
+    part.used = false;
+  }
+  return bridges;
+}
+
+function getLongestBridges(parts) {
+  const bridges = getBridges(parts);
+  const maxDepth = bridges.reduce(
+    (depth, bridge) => Math.max(depth, bridge.length),
+    0
+  );
+
+  const longestBridges = bridges.filter(b => b.length == maxDepth);
+  return longestBridges.reduce(
+    (strength, bridge) => Math.max(strength, calculateStrongest(bridge)),
+    0
+  );
+}
+
 console.log(calculateStrongest(parts));
+console.log(getLongestBridges(parts));
