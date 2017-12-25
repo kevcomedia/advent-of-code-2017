@@ -2,24 +2,10 @@ const input = require('fs')
   .readFileSync('./day24_input', 'utf8')
   .trim();
 
-const test = `0/2
-2/2
-2/3
-3/4
-3/5
-0/1
-10/1
-9/10`;
-
 const parts = input.split('\n').map(p => ({
   pins: new Set(p.split('/').map(Number)),
   used: false,
 }));
-
-function computePartStrength(part) {
-  const pins = [...part];
-  return pins.length == 2 ? pins[0] + pins[1] : 2 * pins[0];
-}
 
 function getOtherPin(part, pin) {
   if (part.pins.size == 1) {
@@ -30,27 +16,27 @@ function getOtherPin(part, pin) {
   return pin == pins[0] ? pins[1] : pins[0];
 }
 
+function getUnusedParts(parts, start) {
+  return parts.filter(p => !p.used).filter(p => p.pins.has(start));
+}
+
 function calculateStrongest(parts, start = 0, total = 0) {
-  const unusedParts = parts.filter(p => !p.used).filter(p => p.pins.has(start));
+  const unusedParts = getUnusedParts(parts, start);
   if (unusedParts.length == 0) {
     return total;
   }
 
-  let max = 0;
-
-  for (let i = 0; i < unusedParts.length; i++) {
-    const part = unusedParts[i];
-    const end = getOtherPin(part, start);
+  return unusedParts.reduce((currMax, part) => {
+    end = getOtherPin(part, start);
     part.used = true;
-    max = Math.max(max, calculateStrongest(parts, end, total + start + end));
+    const strength = calculateStrongest(parts, end, total + start + end);
     part.used = false;
-  }
-
-  return max;
+    return Math.max(currMax, strength);
+  }, 0);
 }
 
 function getBridges(parts, start = 0, bridges = [], currBridge = []) {
-  const unusedParts = parts.filter(p => !p.used).filter(p => p.pins.has(start));
+  const unusedParts = getUnusedParts(parts, start);
   if (unusedParts.length == 0) {
     bridges.push(currBridge.slice());
   }
